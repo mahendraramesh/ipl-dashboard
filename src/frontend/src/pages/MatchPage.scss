@@ -1,0 +1,11 @@
+.MatchPage {
+  .match-container {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+  }
+
+  .match-heading {
+    padding: 10px;
+    font-size: 2rem;
+  }
+}

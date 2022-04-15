@@ -1,32 +1,39 @@
+import './MatchPage.scss';
 import { React, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { LatestMatchDetail } from '../components/LatestMatchDetail';
-import { MatchSmallCard } from '../components/MatchSmallCard';
+import { useParams, Link } from 'react-router-dom';
+import { MatchDetailCard } from '../components/MatchDetailCard';
+import { YearSelector } from '../components/YearSelector';
 
 export const MatchPage = () => {
   const { teamName, year } = useParams();
-  const [team, setTeam] = useState({matches: []});
+  const [matches, setMatches] = useState([]);
 
   useEffect(() => {
     const fetchMatches = async () => {
-      const response = await fetch(`http://localhost:8080/team/${teamName}`);
+      const response = await fetch(`http://localhost:8080/team/${teamName}/matches?year=${year}`);
       const data = await response.json();
-      console.log(data);
-      setTeam(data);
+      setMatches(data);
     };
     
     fetchMatches();
-  }, [teamName]);
+  }, [teamName, year]);
 
-  if(!team || !team.teamName) {
+  if(!teamName || matches.length === 0) {
     return(
       <h1>Team Not Found. Talk to BCCI to get your team added in IPL next season!</h1>
     )
   }
 
   return(
-    <div className="Match-page">
-      <h1>Matches played by {teamName} in {year}</h1>
+    <div className="MatchPage">
+      <Link to='/'>Home</Link>
+      <div className='match-container'>
+        <YearSelector teamName={teamName} currentYear={year}/>
+        <div>
+          <h1 className='match-heading'>Matches played by {teamName} in {year}</h1>
+          {matches.map(match => <MatchDetailCard key={match.id} teamName={teamName} match={match}/>)}
+        </div>
+      </div>
     </div>
   );
 }
